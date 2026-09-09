@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { Fredoka } from 'next/font/google';
+
+const fredoka = Fredoka({
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Feeding Brennen',
@@ -13,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen">
+      <body className={`${fredoka.className} food-background min-h-screen`}>
         <header className="border-b border-gray-200 bg-white">
           <div className="mx-auto max-w-3xl px-6 py-4">
             <h1 className="text-xl font-semibold">Feeding Brennen</h1>

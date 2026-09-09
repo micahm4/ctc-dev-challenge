@@ -36,6 +36,12 @@ export interface Restaurant {
   createdAt: string;
 }
 
+export interface SpendingSummary {
+  totalSpent: number;
+  visitCount: number;
+  averageSpent: number;
+}
+
 export interface Visit {
   id: number;
   restaurantId: number;

@@ -1,0 +1,40 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="200"
+  height="200"
+  viewBox="0 0 200 200"
+  fill="none"
+>
+  <g
+    stroke="#B4532A"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.1"
+  >
+    <!-- Plate -->
+    <circle cx="48" cy="48" r="25" />
+    <circle cx="48" cy="48" r="17" />
+
+    <!-- Fork -->
+    <path d="M105 20v22" />
+    <path d="M99 20v12c0 6 12 6 12 0V20" />
+    <path d="M105 42v27" />
+
+    <!-- Spoon -->
+    <ellipse cx="145" cy="31" rx="8" ry="12" />
+    <path d="M145 43v27" />
+
+    <!-- Pizza slice -->
+    <path d="M28 126l48-18-16 48z" />
+    <path d="M28 126c6 7 15 10 23 9" />
+    <circle cx="53" cy="125" r="3" />
+    <circle cx="58" cy="142" r="3" />
+
+    <!-- Bowl -->
+    <path d="M112 127h55c-4 23-17 34-28 34s-23-11-27-34z" />
+    <path d="M106 127h67" />
+    <path d="M128 116c-5-7 5-10 0-18" />
+    <path d="M145 116c-5-7 5-10 0-18" />
+  </g>
+</svg>
