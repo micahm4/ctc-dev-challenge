@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/db/pool';
-import { handleError } from '@/lib/errors';
+import { ApiError, handleError } from '@/lib/errors';
 import { toRestaurant } from '@/lib/types';
+import {
+  parseRestaurantId,
+  validateRestaurantBody,
+} from '@/lib/restaurantValidation';
 
 type Params = { params: { id: string } };
 
@@ -11,18 +15,27 @@ type Params = { params: { id: string } };
  */
 export async function GET(_req: Request, { params }: Params) {
   try {
+    const id = parseRestaurantId(params.id);
+
+    if (id === null) {
+      throw new ApiError(404, 'Restaurant not found');
+    }
+
     const { rows } = await pool.query(
-      'SELECT * FROM restaurants WHERE id = $1',
-      [params.id]
+      `SELECT id, name, cuisine, address, rating,
+              created_at AS "createdAt"
+       FROM restaurants
+       WHERE id = $1`,
+      [id]
     );
 
     if (rows.length === 0) {
-      return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 });
+      throw new ApiError(404, 'Restaurant not found');
     }
 
     return NextResponse.json(toRestaurant(rows[0]));
-  } catch (err) {
-    return handleError(err);
+  } catch (error) {
+    return handleError(error);
   }
 }
 
@@ -33,14 +46,18 @@ export async function GET(_req: Request, { params }: Params) {
  * TODO (A2): implement. Update the row matching :id and return the updated
  * record (or 404 if it doesn't exist). Validate the body the same way POST does.
  */
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request, { params }: Params) {
   try {
-    const id = Number(params.id);
-    const body = await req.json();
-    const { name, cuisine, address, rating } = body;
+    const id = parseRestaurantId(params.id);
+
+    if (id === null) {
+      throw new ApiError(404, 'Restaurant not found');
+    }
+
+    const body: unknown = await req.json();
+
+    const { name, cuisine, address, rating } =
+      validateRestaurantBody(body);
 
     const { rows } = await pool.query(
       `UPDATE restaurants
@@ -52,13 +69,10 @@ export async function PUT(
     );
 
     if (rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Restaurant not found' },
-        { status: 404 }
-      );
+      throw new ApiError(404, 'Restaurant not found');
     }
 
-    return NextResponse.json(toRestaurant(rows[0]), { status: 200 });
+    return NextResponse.json(toRestaurant(rows[0]));
   } catch (error) {
     return handleError(error);
   }
@@ -75,12 +89,13 @@ export async function PUT(
  * restaurant's visits. Go read it. If you disagree with it, say so in your
  * write-up.
  */
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: Request, { params }: Params) {
   try {
-    const id = Number(params.id);
+    const id = parseRestaurantId(params.id);
+
+    if (id === null) {
+      throw new ApiError(404, 'Restaurant not found');
+    }
 
     const { rows } = await pool.query(
       `DELETE FROM restaurants
@@ -90,10 +105,7 @@ export async function DELETE(
     );
 
     if (rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Restaurant not found' },
-        { status: 404 }
-      );
+      throw new ApiError(404, 'Restaurant not found');
     }
 
     return new NextResponse(null, { status: 204 });
